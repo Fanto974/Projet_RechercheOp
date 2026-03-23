@@ -13,7 +13,8 @@ class Problem :
         """
         self.n, self.m, self.couts, self.provisions, self.commandes = lire_fichier(path)
         self.proposition = [[]]
-        self.coutTotal = 0
+        self.coutProp = 0
+        self.graph = []
 
     def repr_prob(self):
         """
@@ -299,4 +300,14 @@ class Problem :
             for j in range(self.m):
                 if self.proposition[i][j] is not None and self.proposition[i][j] != -1:
                     total += self.couts[i][j] * self.proposition[i][j]
-        self.coutTotal = total
+        self.coutProp = total
+
+    def graph_base(self):
+        """Liste la liste des arêtes du graphe de base."""
+        aretes = []
+        for i in range(self.n):
+            for j in range(self.m):
+                if self.proposition[i][j] is not None and self.proposition[i][j] != -1:
+                    aretes.append((i, j))
+        self.graph = aretes
+        afficher_graphe(self.graph, self.n, self.m)
