@@ -154,3 +154,24 @@ def afficher_graphe(aretes, n, m):
     print("=" * largeur + "\n")
 
 
+def construire_adjacence(aretes):
+    """
+    Construit la liste d'adjacence du graphe biparti sous forme de DICTIONNAIRE.
+
+    """
+    adj = {}
+    for (i, j) in aretes:
+        cle_fournisseur = f"P{i}"  # Sommet fournisseur
+        cle_client = f"C{j}"  # Sommet client
+
+        # Ajouter le client dans les voisins du fournisseur
+        if cle_fournisseur not in adj:
+            adj[cle_fournisseur] = []
+        adj[cle_fournisseur].append(cle_client)
+
+        # Ajouter le fournisseur dans les voisins du client (graphe non orienté)
+        if cle_client not in adj:
+            adj[cle_client] = []
+        adj[cle_client].append(cle_fournisseur)
+
+    return adj
