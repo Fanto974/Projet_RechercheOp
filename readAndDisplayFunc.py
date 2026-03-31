@@ -79,99 +79,97 @@ def largeur_col(matrice, provisions, commandes, m, en_tete_ligne="P"):
 
     return larg_nom, largeurs, larg_prov
 
-def afficher_graphe(aretes, n, m):
-    """Dessine le graphe biparti : fournisseurs en haut, clients en bas."""
-
-    largeur = 120
-    hauteur = 30
-    grille = [[' '] * largeur for _ in range(hauteur)]
-
-    ligne_F = 1
-    ligne_C = hauteur - 2
-
-    # Positions horizontales des fournisseurs
-    pos_F = {}
-    pas_F = largeur // (n + 1)
+def afficher_potentiels(potentiels_u, potentiels_v, n, m):
+    """
+    Affiche les potentiels u_i (fournisseurs) et v_j (clients).
+    u_i + v_j = a_ij pour les arêtes de base.
+    """
+    print("\n  POTENTIELS :")
+    print("  Fournisseurs (u) :", end="")
     for i in range(n):
-        col = pas_F * (i + 1)
-        pos_F[i] = col
-        label = f"[P{i+1}]"
-        start = col - len(label) // 2
-        for k, c in enumerate(label):
-            if 0 <= start + k < largeur:
-                grille[ligne_F][start + k] = c
-
-    # Positions horizontales des clients
-    pos_C = {}
-    pas_C = largeur // (m + 1)
+        print(f"  u{i+1}={potentiels_u[i]}", end="")
+    print()
+    print("  Clients (v)      :", end="")
     for j in range(m):
-        col = pas_C * (j + 1)
-        pos_C[j] = col
-        label = f"[C{j+1}]"
-        start = col - len(label) // 2
-        for k, c in enumerate(label):
-            if 0 <= start + k < largeur:
-                grille[ligne_C][start + k] = c
-
-    # Dessin des arêtes diagonales sans label
-    for (i, j) in aretes:
-        x0, y0 = pos_F[i], ligne_F + 1
-        x1, y1 = pos_C[j], ligne_C - 1
-
-        # Algorithme de Bresenham
-        dx = abs(x1 - x0)
-        dy = abs(y1 - y0)
-        sx = 1 if x1 > x0 else -1
-        sy = 1 if y1 > y0 else -1
-        err = dx - dy
-
-        x, y = x0, y0
-        while True:
-            if 0 <= y < hauteur and 0 <= x < largeur:
-                if grille[y][x] == ' ':
-                    if x0 == x1:
-                        grille[y][x] = '|'
-                    elif x0 < x1:
-                        grille[y][x] = '\\'
-                    else:
-                        grille[y][x] = '/'
-            if x == x1 and y == y1:
-                break
-            e2 = 2 * err
-            if e2 > -dy:
-                err -= dy
-                x += sx
-            if e2 < dx:
-                err += dx
-                y += sy
-
-    # Affichage
-    print("\n" + "=" * largeur)
-    print(" GRAPHE DE TRANSPORT".center(largeur))
-    print("=" * largeur)
-    for row in grille:
-        print(''.join(row))
-    print("=" * largeur + "\n")
+        print(f"  v{j+1}={potentiels_v[j]}", end="")
+    print("\n")
 
 
-def construire_adjacence(aretes):
+def afficher_table_potentiels_marginaux(couts, potentiels_u, potentiels_v, proposition, n, m):
     """
-    Construit la liste d'adjacence du graphe biparti sous forme de DICTIONNAIRE.
+    Affiche :
+    - La table des coûts potentiels : E_ij = u_i + v_j
+    - La table des coûts marginaux  : M_ij = a_ij - E_ij (seulement pour les non-base)
 
+    Les coûts marginaux ne sont calculés que pour les arêtes hors-base.
+    Pour les arêtes de base, M_ij = 0 par construction.
     """
-    adj = {}
-    for (i, j) in aretes:
-        cle_fournisseur = f"P{i}"  # Sommet fournisseur
-        cle_client = f"C{j}"  # Sommet client
+    # Table des coûts potentiels
+    print("  TABLE DES COÛTS POTENTIELS (E_ij = u_i + v_j) :")
+    larg_nom = max(len(f"P{i + 1}") for i in range(n)) + 1
+    largeurs = []
+    for j in range(m):
+        w = len(f"C{j + 1}")
+        for i in range(n):
+            val = potentiels_u[i] + potentiels_v[j]
+            w = max(w, len(str(val)))
+        largeurs.append(w + 2)
 
-        # Ajouter le client dans les voisins du fournisseur
-        if cle_fournisseur not in adj:
-            adj[cle_fournisseur] = []
-        adj[cle_fournisseur].append(cle_client)
+    en_tete = " " * larg_nom
+    for j in range(m):
+        en_tete += f"{'C' + str(j + 1):>{largeurs[j]}}"
+    print(en_tete)
+    print("-" * len(en_tete))
 
-        # Ajouter le fournisseur dans les voisins du client (graphe non orienté)
-        if cle_client not in adj:
-            adj[cle_client] = []
-        adj[cle_client].append(cle_fournisseur)
+    for i in range(n):
+        ligne = f"{'P' + str(i + 1):<{larg_nom}}"
+        for j in range(m):
+            val = potentiels_u[i] + potentiels_v[j]
+            ligne += f"{val:>{largeurs[j]}}"
+        print(ligne)
+    print()
 
-    return adj
+    # Table des coûts marginaux
+    print("  TABLE DES COÛTS MARGINAUX (M_ij = a_ij - E_ij) :")
+    marginaux = [[None] * m for _ in range(n)]
+    for i in range(n):
+        for j in range(m):
+            e_ij = potentiels_u[i] + potentiels_v[j]
+            marginaux[i][j] = couts[i][j] - e_ij
+
+    # Recalculer les largeurs pour les marginaux
+    largeurs_m = []
+    for j in range(m):
+        w = len(f"C{j + 1}")
+        for i in range(n):
+            if proposition[i][j] is not None and proposition[i][j] != -1:
+                w = max(w, 1)  # Pour "0" ou "*"
+            else:
+                w = max(w, len(str(marginaux[i][j])))
+        largeurs_m.append(w + 2)
+
+    en_tete = " " * larg_nom
+    for j in range(m):
+        en_tete += f"{'C' + str(j + 1):>{largeurs_m[j]}}"
+    print(en_tete)
+    print("-" * len(en_tete))
+
+    meilleure_arete = None
+    meilleur_marginal = 0
+
+    for i in range(n):
+        ligne = f"{'P' + str(i + 1):<{larg_nom}}"
+        for j in range(m):
+            if proposition[i][j] is not None and proposition[i][j] != -1:
+                # Arête de base : marginal = 0
+                ligne += f"{'*':>{largeurs_m[j]}}"
+            else:
+                val = marginaux[i][j]
+                ligne += f"{val:>{largeurs_m[j]}}"
+                if val < meilleur_marginal:
+                    meilleur_marginal = val
+                    meilleure_arete = (i, j)
+        print(ligne)
+    print()
+
+    return marginaux, meilleure_arete, meilleur_marginal

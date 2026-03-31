@@ -1,5 +1,7 @@
+from graphe import Graphe
 from readAndDisplayFunc import *
 from collections import deque
+
 
 class Problem :
 
@@ -15,7 +17,8 @@ class Problem :
         self.n, self.m, self.couts, self.provisions, self.commandes = lire_fichier(path)
         self.proposition = [[]]
         self.coutProp = 0
-        self.graph = []
+        self.graph = None
+        self.potentiels = ([], [])
 
     def repr_prob(self):
         """
@@ -288,6 +291,7 @@ class Problem :
             else:
                 colonnes_actives.discard(j_choisi)
                 print(f"    Colonne C{j_choisi + 1} épuisée")
+        self.proposition = proposition
         self.cout_total()
 
 
@@ -309,107 +313,193 @@ class Problem :
             for j in range(self.m):
                 if self.proposition[i][j] is not None and self.proposition[i][j] != -1:
                     aretes.append((i, j))
-        self.graph = aretes
-        afficher_graphe(self.graph, self.n, self.m)
+        self.graph = Graphe(aretes, self.n, self.m)
+        self.graph.afficher()
 
-    def detecter_cycle(self):
+
+    def est_non_degeneree(self):
         """
-        Détecte un cycle dans le graphe biparti par BFS.
-        Utilise un dictionnaire pour la liste d'adjacence.
+        Vérifie que la proposition a exactement n + m - 1 arêtes de base.
+        Une proposition non dégénérée est un arbre couvrant du graphe biparti.
+        """
+        nb_aretes = 0
+        for i in range(self.n):
+            for j in range(self.m):
+                if self.proposition[i][j] is not None and self.proposition[i][j] != -1:
+                    nb_aretes += 1
+
+        attendu = self.n + self.m - 1
+        print(f"  Nombre d'arêtes de base : {nb_aretes} (attendu : {attendu})")
+        return nb_aretes == attendu
+
+    def maximiser_transport_cycle(self, cycle):
+        """
+        Maximise le transport sur un cycle.
+
+        Le cycle est alternativement + et - :
+        - La première arête (l'arête ajoutée) est +
+        - Les suivantes alternent -, +, -, +, ...
+
+        delta = min des valeurs sur les arêtes -
 
         Retourne :
-            (has_cycle, cycle_aretes)
-            has_cycle (bool) : True si un cycle est détecté
-            cycle_aretes (list) : liste des arêtes (i,j) formant le cycle
-                                  (indices fournisseur/client numériques)
+            proposition modifiée
+            delta (int) : la quantité transférée
+            aretes_supprimees (list) : arêtes tombées à 0
         """
-        if not self.graph:
-            return False, []
+        if not cycle:
+            return self.proposition, 0, []
 
-        adj = construire_adjacence(self.graph)
+        # Identifier les arêtes + et -
+        aretes_plus = []
+        aretes_moins = []
+        for k, (i, j) in enumerate(cycle):
+            if k % 2 == 0:
+                aretes_plus.append((i, j))
+            else:
+                aretes_moins.append((i, j))
 
-        # Dictionnaires pour le BFS (au lieu de listes indexées par entier)
-        visite = {}  # sommet -> True/False
-        parent = {}  # sommet -> sommet parent (ou None pour la racine)
+        print("  Arêtes + :", [(i + 1, j + 1) for (i, j) in aretes_plus])
+        print("  Arêtes - :", [(i + 1, j + 1) for (i, j) in aretes_moins])
 
-        # Initialiser tous les sommets comme non visités
-        for sommet in adj:
-            visite[sommet] = False
-            parent[sommet] = None
+        # Calculer delta
+        delta = float('inf')
+        for (i, j) in aretes_moins:
+            val = self.proposition[i][j]
+            if val is not None and val != -1:
+                delta = min(delta, val)
+            else:
+                delta = 0
 
-        # Parcourir toutes les composantes connexes
-        for depart in adj:
-            # On évite de faire le traitement plusieurs fois pour le même noeud
-            if visite[depart]:
-                continue
+        print(f"  delta = {delta}")
 
-            # initialisation du parcours en largeur avec une file
-            file = deque([depart])
-            visite[depart] = True
+        # Appliquer le transfert
+        for (i, j) in aretes_plus:
+            if self.proposition[i][j] is None or self.proposition[i][j] == -1:
+                self.proposition[i][j] = delta
+            else:
+                self.proposition[i][j] += delta
 
-            while file:
-                # Tant qu'il reste des éléments dans la file on continue notre parcour en largeur
-                u = file.popleft()
+        aretes_supprimees = []
+        for (i, j) in aretes_moins:
+            self.proposition[i][j] -= delta
+            if self.proposition[i][j] == 0:
+                aretes_supprimees.append((i, j))
 
-                # On parcours tous les sommets adjacents au sommet sur lequel on est
-                for v in adj.get(u, []): # On met un .get pour ne pas avoir une erreur si u n'est pas dans le dico
-                    if not visite[v]:
-                        # Sommet non encore visité : on le découvre et on l'ajoute à la liste
-                        visite[v] = True
-                        parent[v] = u
-                        file.append(v)
+        # Supprimer UNE arête à 0 (la première trouvée dans les arêtes -)
+        if aretes_supprimees:
+            # On supprime la dernière arête à 0 dans les arêtes -
+            i_sup, j_sup = aretes_supprimees[-1]
+            self.proposition[i_sup][j_sup] = None
+            print(f"  Arête supprimée : ({i_sup + 1}, {j_sup + 1})")
 
-                    elif v != parent[u]:
-                        # si le sommet est déjà visité ET ce n'est pas le parent de ce sommet. (pcq le parent d'un sommet est aussi un somment adjacent à celui ci donc on veut pas le prendre en comtpe)
-                        # => CYCLE DÉTECTÉ entre u et v
-                        print(f"  Cycle détecté entre sommets {u} et {v}")
+            # S'il y a d'autres arêtes à 0, on les garde à 0 (dégénérescence)
+            if len(aretes_supprimees) > 1:
+                print(f"  Attention : dégénérescence, arêtes restantes à 0 : "
+                      f"{[(i + 1, j + 1) for (i, j) in aretes_supprimees[:-1]]}")
 
-                        # --- Reconstruction du cycle ---
+        return self.proposition, delta, aretes_supprimees
 
-                        # 1) Collecter les parents de u
-                        parents_u = set()
-                        actual = u
-                        while actual is not None:
-                            parents_u.add(actual)
-                            actual = parent[actual]
+    def rendre_connexe(self, composantes):
+        """
+        Rend le graphe connexe en ajoutant des arêtes de coût minimum
+        entre les composantes.
+        Les arêtes ajoutées ont une valeur de 0 (dégénérescence).
+        On trie les arêtes hors-base par coût croissant et on ajoute
+        celles qui relient deux composantes différentes.
 
-                        # 2) Remonter depuis v jusqu'à trouver le parent commun
-                        chemin_v = []
-                        y = v
-                        while y not in parents_u:
-                            chemin_v.append(y)
-                            y = parent[y]
-                        parent_commun = y
-                        chemin_v.append(parent_commun)
+        Les composantes contiennent des clés "P0", "C1", etc. (format dictionnaire).
+        """
+        # Créer un dictionnaire sommet -> numéro de composante
+        comp_de = {}
+        for k, comp in enumerate(composantes):
+            for s in comp:
+                comp_de[s] = k
 
-                        # 3) Remonter depuis u jusqu'à l'ancêtre commun
-                        chemin_u = []
-                        x = u
-                        while x != parent_commun:
-                            chemin_u.append(x)
-                            x = parent[x]
-                        chemin_u.append(parent_commun)
+        # Lister toutes les arêtes hors-base triées par coût croissant
+        aretes_hors_base = []
+        for i in range(self.n):
+            for j in range(self.m):
+                if self.proposition[i][j] is None or self.proposition[i][j] == -1:
+                    aretes_hors_base.append((self.couts[i][j], i, j))
+        aretes_hors_base.sort()
 
-                        # 4) Assembler le cycle : u -> ancêtre -> v
-                        cycle_sommets = chemin_u + chemin_v[::-1][1:]
+        nb_composantes = len(composantes)
 
-                        # 5) Convertir les sommets ("P0", "C1", ...) en arêtes (i, j)
-                        cycle_aretes = []
-                        for k in range(len(cycle_sommets)):
-                            s1 = cycle_sommets[k]
-                            s2 = cycle_sommets[(k + 1) % len(cycle_sommets)]
+        for (cout, i, j) in aretes_hors_base:
+            cle_f = f"P{i}"  # Clé du fournisseur dans le dictionnaire
+            cle_c = f"C{j}"  # Clé du client dans le dictionnaire
 
-                            # Identifier qui est le fournisseur et qui est le client
-                            if s1.startswith("P") and s2.startswith("C"):
-                                i = int(s1[1:])
-                                j = int(s2[1:])
-                                cycle_aretes.append((i, j))
-                            elif s1.startswith("C") and s2.startswith("P"):
-                                j = int(s1[1:])
-                                i = int(s2[1:])
-                                cycle_aretes.append((i, j))
+            if cle_f in comp_de and cle_c in comp_de:
+                if comp_de[cle_f] != comp_de[cle_c]:
+                    # Cette arête relie deux composantes -> l'ajouter
+                    self.proposition[i][j] = 0
+                    print(f"  Ajout arête ({i + 1},{j + 1}) avec coût {cout} pour relier les composantes")
 
-                        print(f"  Cycle (arêtes) : {[(i + 1, j + 1) for (i, j) in cycle_aretes]}")
-                        return True, cycle_aretes
+                    # Fusionner les composantes
+                    ancien = comp_de[cle_c]
+                    nouveau = comp_de[cle_f]
+                    for s in comp_de:
+                        if comp_de[s] == ancien:
+                            comp_de[s] = nouveau
 
-        return False, []
+                    nb_composantes -= 1
+                    if nb_composantes == 1:
+                        break
+            elif cle_f not in comp_de:
+                self.proposition[i][j] = 0
+                if cle_c in comp_de:
+                    comp_de[cle_f] = comp_de[cle_c]
+                print(f"  Ajout arête ({i + 1},{j + 1}) pour intégrer P{i + 1}")
+            elif cle_c not in comp_de:
+                self.proposition[i][j] = 0
+                if cle_f in comp_de:
+                    comp_de[cle_c] = comp_de[cle_f]
+                print(f"  Ajout arête ({i + 1},{j + 1}) pour intégrer C{j + 1}")
+
+    def calculer_potentiels(self):
+        """
+        Calcule les potentiels u_i et v_j tels que u_i + v_j = a_ij
+        pour chaque arête de base.
+
+        Retourne :
+            u (list) : potentiels des fournisseurs
+            v (list) : potentiels des clients
+        """
+        u = [None] * self.n
+        v = [None] * self.m
+
+        # Construire les adjacences
+        adj_fournisseur = [[] for _ in range(self.n)]  # Pour chaque fournisseur, liste des clients en base
+        adj_client = [[] for _ in range(self.m)]  # Pour chaque client, liste des fournisseurs en base
+
+        for i in range(self.n):
+            for j in range(self.m):
+                if self.proposition[i][j] is not None and self.proposition[i][j] != -1:
+                    adj_fournisseur[i].append(j)
+                    adj_client[j].append(i)
+
+        # Fixer u[0] = 0
+        u[0] = 0
+
+        # BFS pour propager les potentiels
+        file = deque()
+        file.append(('u', 0))  # On commence par le fournisseur 0
+
+        while file:
+            type_sommet, idx = file.popleft()
+
+            if type_sommet == 'u':
+                # Fournisseur idx : u[idx] est connu
+                for j in adj_fournisseur[idx]:
+                    if v[j] is None:
+                        v[j] = self.couts[idx][j] - u[idx]
+                        file.append(('v', j))
+            else:
+                # Client idx : v[idx] est connu
+                for i in adj_client[idx]:
+                    if u[i] is None:
+                        u[i] = self.couts[i][idx] - v[idx]
+                        file.append(('u', i))
+
+        self.potentiels = (u, v)
