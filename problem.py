@@ -20,6 +20,18 @@ class Problem :
         self.graph = None
         self.potentiels = ([], [])
 
+    def check_validity(self):
+        # Vérifier l'équilibre
+        total_prov = sum(self.provisions)
+        total_cmd = sum(self.commandes)
+        print(f"\nProblème : {self.n} fournisseurs x {self.m} clients")
+        print(f"Total provisions = {total_prov}, Total commandes = {total_cmd}")
+        if total_prov != total_cmd:
+            print("ERREUR : Problème non équilibré !")
+            return False
+        print("Problème équilibré : OK")
+        return True
+
     def repr_prob(self):
         """
         Affiche la matrice des coûts unitaires de transport.
@@ -350,6 +362,14 @@ class Problem :
         if not cycle:
             return self.proposition, 0, []
 
+        # Si une arête est hors-base (None), on la met en position 0 pour qu'elle reçoive le +
+        # → cas marche-pied (arête améliorante hors-base doit entrer en base)
+        # → cas initialisation (toutes en base) : aucune rotation, comportement inchangé
+        for k, (i, j) in enumerate(cycle):
+            if self.proposition[i][j] is None or self.proposition[i][j] == -1:
+                cycle = cycle[k:] + cycle[:k]
+                break
+
         # Identifier les arêtes + et -
         aretes_plus = []
         aretes_moins = []
@@ -398,7 +418,14 @@ class Problem :
                 print(f"  Attention : dégénérescence, arêtes restantes à 0 : "
                       f"{[(i + 1, j + 1) for (i, j) in aretes_supprimees[:-1]]}")
 
-        return self.proposition, delta, aretes_supprimees
+        return delta, aretes_supprimees
+
+    def ajouter_arete(self, arete):
+        """Ajoute l'arête (i, j) à la base et met à jour le graphe et le coût."""
+        i, j = arete
+        self.proposition[i][j] = 0
+        self.graph_base()
+        self.cout_total()
 
     def rendre_connexe(self, composantes):
         """
@@ -503,3 +530,123 @@ class Problem :
                         file.append(('u', i))
 
         self.potentiels = (u, v)
+
+    def methode_marche_pied(self):
+        """
+        Résout le problème de transport par la méthode du marche-pied avec potentiel.
+
+        Paramètres :
+            couts : matrice des coûts
+            proposition : proposition initiale (modifiée en place)
+            provisions, commandes : vecteurs de contraintes
+            n, m : dimensions
+
+        Retourne :
+            proposition optimale
+        """
+        iteration = 0
+        max_iterations = 1000  # Sécurité
+
+        while iteration < max_iterations:
+            iteration += 1
+            print(f"\n{'#' * 70}")
+            print(f"  ITÉRATION {iteration}")
+            print(f"{'#' * 70}")
+
+            # Afficher la proposition courante
+            self.repr_prop(f"PROPOSITION DE TRANSPORT - Itération {iteration}")
+
+            # Coût total courant
+            self.cout_total()
+            print(f"  Coût total = {self.coutProp}")
+
+            # Vérifier la non-dégénérescence
+            self.est_non_degeneree()
+
+            # Récupérer les arêtes de base
+            self.graph_base()
+
+            # --- Test d'acyclicité ---
+            print("\n  --- Test d'acyclicité ---")
+            has_cycle, cycle_aretes = self.graph.detecter_cycle()
+
+            while has_cycle:
+                print("  -> Maximisation sur le cycle détecté")
+                delta, suppr = self.maximiser_transport_cycle(cycle_aretes)
+
+                self.graph_base()
+                has_cycle, cycle_aretes = self.graph.detecter_cycle_bfs()
+                if has_cycle:
+                    print("  -> Autre cycle détecté, on recommence")
+
+            print("  Proposition acyclique : OK")
+
+            # --- Test de connexité ---
+            print("\n  --- Test de connexité ---")
+            self.graph_base()
+            est_connexe, composantes = self.graph.test_connexite()
+
+            if not est_connexe:
+                self.rendre_connexe(composantes)
+
+                # Revérifier acyclicité après ajout
+                self.graph_base()
+                has_cycle, cycle_aretes = self.graph.detecter_cycle()
+                while has_cycle:
+                    delta, suppr = self.maximiser_transport_cycle(cycle_aretes)
+                    self.graph_base()
+                    has_cycle, cycle_aretes = self.graph.detecter_cycle()
+
+            # --- Calcul des potentiels ---
+            print("\n  --- Calcul des potentiels ---")
+            self.calculer_potentiels()
+            (u, v) = self.potentiels
+
+            if None in u or None in v:
+                print("  ERREUR : Potentiels non calculables (graphe non connexe ?)")
+                print(f"  u = {u}")
+                print(f"  v = {v}")
+                break
+
+            afficher_potentiels(u, v, self.n, self.m)
+
+            # --- Coûts potentiels et marginaux ---
+            print("  --- Tables des coûts potentiels et marginaux ---")
+            marginaux, meilleure_arete, meilleur_marginal = afficher_table_potentiels_marginaux(
+                self.couts, u, v, self.proposition, self.n, self.m)
+
+            # --- Test d'optimalité ---
+            if meilleure_arete is None:
+                print("  *** SOLUTION OPTIMALE TROUVÉE ***")
+                print(f"  Coût optimal = {self.coutProp}")
+                break
+            else:
+                i_best, j_best = meilleure_arete
+                print(f"  Arête améliorante : ({i_best + 1}, {j_best + 1}) avec marginal = {meilleur_marginal}")
+
+                # Ajouter l'arête améliorante et trouver le cycle
+                print("\n  --- Recherche du cycle ---")
+                self.ajouter_arete((i_best, j_best))
+                has_cycle, cycle_aretes = self.graph.detecter_cycle()
+
+                if not has_cycle:
+                    print("  ERREUR : Impossible de trouver le cycle")
+                    break
+
+                print(f"  Cycle trouvé : {[(i + 1, j + 1) for (i, j) in cycle_aretes]}")
+
+                # Maximiser le transport sur ce cycle
+                print("\n  --- Maximisation du transport ---")
+                delta, suppr = self.maximiser_transport_cycle(cycle_aretes)
+
+                if delta == 0:
+                    print("  delta = 0, dégénérescence")
+
+        # Affichage final
+        print(f"\n{'=' * 70}")
+        print("  SOLUTION OPTIMALE")
+        print(f"{'=' * 70}")
+        print("PROPOSITION OPTIMALE")
+        self.repr_prop()
+        self.cout_total()
+        print(f"  COÛT TOTAL OPTIMAL = {self.coutProp}")

@@ -206,7 +206,7 @@ class Graphe:
 
         return False, []
 
-    def test_connexite_bfs(self):
+    def test_connexite(self):
         """
         Teste si le graphe biparti formé par les arêtes de base est connexe.
         Utilise un dictionnaire pour la liste d'adjacence.
