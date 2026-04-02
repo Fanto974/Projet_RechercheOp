@@ -130,4 +130,3 @@ def creer_tous_les_fichiers(dossier="files"):
         chemin = creer_fichier_probleme(num, dossier)
         print(f"Fichier créé : {chemin}")
 
-creer_tous_les_fichiers()
