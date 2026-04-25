@@ -4,6 +4,7 @@ import sys
 import time
 import contextlib
 import tempfile
+import io
 import re
 
 from readAndDisplayFunc import *
@@ -38,7 +39,7 @@ def generer_probleme_aleatoire(taille_n):
     return tmp.name
 
 
-def mesurer_complexite(tailles, nb_repetitions=100, silencieux=True):
+def mesurer_complexite(tailles, nb_repetitions=10, silencieux=True):
     """
     Mesure les temps d'exécution pour différentes tailles de problèmes.
 
@@ -115,5 +116,33 @@ def mesurer_complexite(tailles, nb_repetitions=100, silencieux=True):
 
     return resultats
 
-res = mesurer_complexite([10])
-afficher_resultats(res)
+class TeeBuffer:
+    def __init__(self, original):
+        self.original = original
+        self.buffer = io.StringIO()
+
+    def write(self, data):
+        self.original.write(data)
+        self.original.flush()
+        self.buffer.write(data)
+
+    def flush(self):
+        self.original.flush()
+
+    def getvalue(self):
+        return self.buffer.getvalue()
+
+
+# Remplace la fin du script par :
+tee_out = TeeBuffer(sys.stdout)
+tee_err = TeeBuffer(sys.stderr)
+
+with contextlib.redirect_stdout(tee_out), contextlib.redirect_stderr(tee_err):
+    res = mesurer_complexite([10])
+    afficher_resultats(res)
+
+with open("resultats.txt", "w", encoding="utf-8") as f:
+    f.write(tee_out.getvalue())
+    f.write(tee_err.getvalue())
+
+print("Résultats copiés dans 'resultats.txt'")
