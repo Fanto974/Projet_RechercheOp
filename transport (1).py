@@ -179,7 +179,7 @@ def afficher_proposition(proposition, provisions, commandes, n, m, titre="PROPOS
         for j in range(m):
             val = proposition[i][j]
             if val is None or val == -1:
-                ligne.append(".")
+                ligne.append("0")
             else:
                 ligne.append(str(val))
         mat_aff.append(ligne)

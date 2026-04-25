@@ -89,7 +89,7 @@ class Problem :
             for j in range(self.m):
                 val = self.proposition[i][j]
                 if val is None or val == -1:
-                    ligne.append(".")
+                    ligne.append("0")
                 else:
                     ligne.append(str(val))
             mat_aff.append(ligne)

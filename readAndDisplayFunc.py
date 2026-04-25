@@ -163,7 +163,7 @@ def afficher_table_potentiels_marginaux(couts, potentiels_u, potentiels_v, propo
         for j in range(m):
             if proposition[i][j] is not None and proposition[i][j] != -1:
                 # Arête de base : marginal = 0
-                ligne += f"{'*':>{largeurs_m[j]}}"
+                ligne += f"{'0':>{largeurs_m[j]}}"
             else:
                 val = marginaux[i][j]
                 ligne += f"{val:>{largeurs_m[j]}}"
