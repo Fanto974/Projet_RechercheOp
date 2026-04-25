@@ -106,13 +106,13 @@ def afficher_table_potentiels_marginaux(couts, potentiels_u, potentiels_v, propo
     Pour les arêtes de base, M_ij = 0 par construction.
     """
     # Table des coûts potentiels
-    print("  TABLE DES COÛTS POTENTIELS (E_ij = u_i + v_j) :")
+    print("  TABLE DES COÛTS POTENTIELS (E_ij = u_i - v_j) :")
     larg_nom = max(len(f"P{i + 1}") for i in range(n)) + 1
     largeurs = []
     for j in range(m):
         w = len(f"C{j + 1}")
         for i in range(n):
-            val = potentiels_u[i] + potentiels_v[j]
+            val = potentiels_u[i] - potentiels_v[j]
             w = max(w, len(str(val)))
         largeurs.append(w + 2)
 
@@ -125,7 +125,7 @@ def afficher_table_potentiels_marginaux(couts, potentiels_u, potentiels_v, propo
     for i in range(n):
         ligne = f"{'P' + str(i + 1):<{larg_nom}}"
         for j in range(m):
-            val = potentiels_u[i] + potentiels_v[j]
+            val = potentiels_u[i] - potentiels_v[j]
             ligne += f"{val:>{largeurs[j]}}"
         print(ligne)
     print()
@@ -135,7 +135,7 @@ def afficher_table_potentiels_marginaux(couts, potentiels_u, potentiels_v, propo
     marginaux = [[None] * m for _ in range(n)]
     for i in range(n):
         for j in range(m):
-            e_ij = potentiels_u[i] + potentiels_v[j]
+            e_ij = potentiels_u[i] - potentiels_v[j]
             marginaux[i][j] = couts[i][j] - e_ij
 
     # Recalculer les largeurs pour les marginaux

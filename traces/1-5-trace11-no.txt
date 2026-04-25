@@ -212,10 +212,10 @@ Commandes   120  140  160  180  200  220  240  260  280  300
 
   POTENTIELS :
   Fournisseurs (u) :  u1=0  u2=10  u3=20  u4=30  u5=40  u6=50  u7=60  u8=70  u9=80  u10=90  u11=100  u12=110  u13=120  u14=130  u15=140  u16=150  u17=160  u18=170  u19=180  u20=190
-  Clients (v)      :  v1=1  v2=2  v3=3  v4=4  v5=5  v6=6  v7=7  v8=8  v9=9  v10=10
+  Clients (v)      :  v1=-1  v2=-2  v3=-3  v4=-4  v5=-5  v6=-6  v7=-7  v8=-8  v9=-9  v10=-10
 
   --- Tables des coûts potentiels et marginaux ---
-  TABLE DES COÛTS POTENTIELS (E_ij = u_i + v_j) :
+  TABLE DES COÛTS POTENTIELS (E_ij = u_i - v_j) :
        C1   C2   C3   C4   C5   C6   C7   C8   C9  C10
 ------------------------------------------------------
 P1      1    2    3    4    5    6    7    8    9   10

@@ -182,10 +182,10 @@ Commandes   300  500
 
   POTENTIELS :
   Fournisseurs (u) :  u1=0  u2=-40  u3=-6  u4=-1  u5=-38
-  Clients (v)      :  v1=50  v2=46
+  Clients (v)      :  v1=-50  v2=-46
 
   --- Tables des coûts potentiels et marginaux ---
-  TABLE DES COÛTS POTENTIELS (E_ij = u_i + v_j) :
+  TABLE DES COÛTS POTENTIELS (E_ij = u_i - v_j) :
      C1  C2
 -----------
 P1   50  46
@@ -354,10 +354,10 @@ Commandes   300  500
 
   POTENTIELS :
   Fournisseurs (u) :  u1=0  u2=-14  u3=20  u4=25  u5=-12
-  Clients (v)      :  v1=24  v2=20
+  Clients (v)      :  v1=-24  v2=-20
 
   --- Tables des coûts potentiels et marginaux ---
-  TABLE DES COÛTS POTENTIELS (E_ij = u_i + v_j) :
+  TABLE DES COÛTS POTENTIELS (E_ij = u_i - v_j) :
      C1  C2
 -----------
 P1   24  20
@@ -526,10 +526,10 @@ Commandes   300  500
 
   POTENTIELS :
   Fournisseurs (u) :  u1=0  u2=0  u3=20  u4=25  u5=-12
-  Clients (v)      :  v1=10  v2=20
+  Clients (v)      :  v1=-10  v2=-20
 
   --- Tables des coûts potentiels et marginaux ---
-  TABLE DES COÛTS POTENTIELS (E_ij = u_i + v_j) :
+  TABLE DES COÛTS POTENTIELS (E_ij = u_i - v_j) :
      C1  C2
 -----------
 P1   10  20

@@ -182,10 +182,10 @@ Commandes   100  100
 
   POTENTIELS :
   Fournisseurs (u) :  u1=0  u2=-10
-  Clients (v)      :  v1=10  v2=20
+  Clients (v)      :  v1=-10  v2=-20
 
   --- Tables des coûts potentiels et marginaux ---
-  TABLE DES COÛTS POTENTIELS (E_ij = u_i + v_j) :
+  TABLE DES COÛTS POTENTIELS (E_ij = u_i - v_j) :
      C1  C2
 -----------
 P1   10  20

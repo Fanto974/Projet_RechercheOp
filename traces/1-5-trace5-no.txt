@@ -137,10 +137,10 @@ Commandes   35  20  20
 
   POTENTIELS :
   Fournisseurs (u) :  u1=0  u2=1  u3=0
-  Clients (v)      :  v1=5  v2=7  v3=7
+  Clients (v)      :  v1=-5  v2=-7  v3=-7
 
   --- Tables des coûts potentiels et marginaux ---
-  TABLE DES COÛTS POTENTIELS (E_ij = u_i + v_j) :
+  TABLE DES COÛTS POTENTIELS (E_ij = u_i - v_j) :
      C1  C2  C3
 ---------------
 P1    5   7   7
@@ -303,10 +303,10 @@ Commandes   35  20  20
 
   POTENTIELS :
   Fournisseurs (u) :  u1=0  u2=1  u3=3
-  Clients (v)      :  v1=5  v2=4  v3=4
+  Clients (v)      :  v1=-5  v2=-4  v3=-4
 
   --- Tables des coûts potentiels et marginaux ---
-  TABLE DES COÛTS POTENTIELS (E_ij = u_i + v_j) :
+  TABLE DES COÛTS POTENTIELS (E_ij = u_i - v_j) :
      C1  C2  C3
 ---------------
 P1    5   4   4
@@ -469,10 +469,10 @@ Commandes   35  20  20
 
   POTENTIELS :
   Fournisseurs (u) :  u1=0  u2=1  u3=1
-  Clients (v)      :  v1=5  v2=6  v3=4
+  Clients (v)      :  v1=-5  v2=-6  v3=-4
 
   --- Tables des coûts potentiels et marginaux ---
-  TABLE DES COÛTS POTENTIELS (E_ij = u_i + v_j) :
+  TABLE DES COÛTS POTENTIELS (E_ij = u_i - v_j) :
      C1  C2  C3
 ---------------
 P1    5   6   4

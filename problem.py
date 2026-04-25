@@ -517,16 +517,16 @@ class Problem :
             type_sommet, idx = file.popleft()
 
             if type_sommet == 'u':
-                # Fournisseur idx : u[idx] est connu
+                # Fournisseur idx : u[idx] est connu → u[i] - v[j] = coût[i][j]
                 for j in adj_fournisseur[idx]:
                     if v[j] is None:
-                        v[j] = self.couts[idx][j] - u[idx]
+                        v[j] = u[idx] - self.couts[idx][j]
                         file.append(('v', j))
             else:
-                # Client idx : v[idx] est connu
+                # Client idx : v[idx] est connu → u[i] = coût[i][j] + v[j]
                 for i in adj_client[idx]:
                     if u[i] is None:
-                        u[i] = self.couts[i][idx] - v[idx]
+                        u[i] = self.couts[i][idx] + v[idx]
                         file.append(('u', i))
 
         self.potentiels = (u, v)

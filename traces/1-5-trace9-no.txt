@@ -192,10 +192,10 @@ Commandes   400  200  100
 
   POTENTIELS :
   Fournisseurs (u) :  u1=0  u2=-20  u3=-21  u4=-24  u5=14  u6=12  u7=0
-  Clients (v)      :  v1=30  v2=26  v3=22
+  Clients (v)      :  v1=-30  v2=-26  v3=-22
 
   --- Tables des coûts potentiels et marginaux ---
-  TABLE DES COÛTS POTENTIELS (E_ij = u_i + v_j) :
+  TABLE DES COÛTS POTENTIELS (E_ij = u_i - v_j) :
      C1  C2  C3
 ---------------
 P1   30  26  22
@@ -371,10 +371,10 @@ Commandes   400  200  100
 
   POTENTIELS :
   Fournisseurs (u) :  u1=0  u2=-20  u3=-21  u4=-24  u5=14  u6=-25  u7=0
-  Clients (v)      :  v1=30  v2=26  v3=22
+  Clients (v)      :  v1=-30  v2=-26  v3=-22
 
   --- Tables des coûts potentiels et marginaux ---
-  TABLE DES COÛTS POTENTIELS (E_ij = u_i + v_j) :
+  TABLE DES COÛTS POTENTIELS (E_ij = u_i - v_j) :
      C1  C2  C3
 ---------------
 P1   30  26  22
@@ -551,10 +551,10 @@ Commandes   400  200  100
 
   POTENTIELS :
   Fournisseurs (u) :  u1=0  u2=-20  u3=-21  u4=-24  u5=14  u6=-25  u7=33
-  Clients (v)      :  v1=30  v2=26  v3=-11
+  Clients (v)      :  v1=-30  v2=-26  v3=11
 
   --- Tables des coûts potentiels et marginaux ---
-  TABLE DES COÛTS POTENTIELS (E_ij = u_i + v_j) :
+  TABLE DES COÛTS POTENTIELS (E_ij = u_i - v_j) :
      C1  C2   C3
 ----------------
 P1   30  26  -11
@@ -730,10 +730,10 @@ Commandes   400  200  100
 
   POTENTIELS :
   Fournisseurs (u) :  u1=0  u2=-20  u3=-21  u4=-24  u5=14  u6=-25  u7=-22
-  Clients (v)      :  v1=30  v2=26  v3=-11
+  Clients (v)      :  v1=-30  v2=-26  v3=11
 
   --- Tables des coûts potentiels et marginaux ---
-  TABLE DES COÛTS POTENTIELS (E_ij = u_i + v_j) :
+  TABLE DES COÛTS POTENTIELS (E_ij = u_i - v_j) :
      C1  C2   C3
 ----------------
 P1   30  26  -11
@@ -909,10 +909,10 @@ Commandes   400  200  100
 
   POTENTIELS :
   Fournisseurs (u) :  u1=0  u2=-20  u3=-21  u4=-24  u5=20  u6=-25  u7=-16
-  Clients (v)      :  v1=30  v2=20  v3=-17
+  Clients (v)      :  v1=-30  v2=-20  v3=17
 
   --- Tables des coûts potentiels et marginaux ---
-  TABLE DES COÛTS POTENTIELS (E_ij = u_i + v_j) :
+  TABLE DES COÛTS POTENTIELS (E_ij = u_i - v_j) :
      C1  C2   C3
 ----------------
 P1   30  20  -17

@@ -138,10 +138,10 @@ Commandes   50  75  30  25
 
   POTENTIELS :
   Fournisseurs (u) :  u1=0  u2=4  u3=9
-  Clients (v)      :  v1=11  v2=12  v3=11  v4=13
+  Clients (v)      :  v1=-11  v2=-12  v3=-11  v4=-13
 
   --- Tables des coûts potentiels et marginaux ---
-  TABLE DES COÛTS POTENTIELS (E_ij = u_i + v_j) :
+  TABLE DES COÛTS POTENTIELS (E_ij = u_i - v_j) :
      C1  C2  C3  C4
 -------------------
 P1   11  12  11  13
@@ -304,10 +304,10 @@ Commandes   50  75  30  25
 
   POTENTIELS :
   Fournisseurs (u) :  u1=0  u2=7  u3=12
-  Clients (v)      :  v1=11  v2=9  v3=8  v4=10
+  Clients (v)      :  v1=-11  v2=-9  v3=-8  v4=-10
 
   --- Tables des coûts potentiels et marginaux ---
-  TABLE DES COÛTS POTENTIELS (E_ij = u_i + v_j) :
+  TABLE DES COÛTS POTENTIELS (E_ij = u_i - v_j) :
      C1  C2  C3  C4
 -------------------
 P1   11   9   8  10
@@ -470,10 +470,10 @@ Commandes   50  75  30  25
 
   POTENTIELS :
   Fournisseurs (u) :  u1=0  u2=3  u3=8
-  Clients (v)      :  v1=11  v2=13  v3=12  v4=10
+  Clients (v)      :  v1=-11  v2=-13  v3=-12  v4=-10
 
   --- Tables des coûts potentiels et marginaux ---
-  TABLE DES COÛTS POTENTIELS (E_ij = u_i + v_j) :
+  TABLE DES COÛTS POTENTIELS (E_ij = u_i - v_j) :
      C1  C2  C3  C4
 -------------------
 P1   11  13  12  10
@@ -636,10 +636,10 @@ Commandes   50  75  30  25
 
   POTENTIELS :
   Fournisseurs (u) :  u1=0  u2=3  u3=8
-  Clients (v)      :  v1=11  v2=13  v3=10  v4=10
+  Clients (v)      :  v1=-11  v2=-13  v3=-10  v4=-10
 
   --- Tables des coûts potentiels et marginaux ---
-  TABLE DES COÛTS POTENTIELS (E_ij = u_i + v_j) :
+  TABLE DES COÛTS POTENTIELS (E_ij = u_i - v_j) :
      C1  C2  C3  C4
 -------------------
 P1   11  13  10  10
@@ -802,10 +802,10 @@ Commandes   50  75  30  25
 
   POTENTIELS :
   Fournisseurs (u) :  u1=0  u2=4  u3=9
-  Clients (v)      :  v1=10  v2=12  v3=10  v4=10
+  Clients (v)      :  v1=-10  v2=-12  v3=-10  v4=-10
 
   --- Tables des coûts potentiels et marginaux ---
-  TABLE DES COÛTS POTENTIELS (E_ij = u_i + v_j) :
+  TABLE DES COÛTS POTENTIELS (E_ij = u_i - v_j) :
      C1  C2  C3  C4
 -------------------
 P1   10  12  10  10
