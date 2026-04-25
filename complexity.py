@@ -39,7 +39,7 @@ def generer_probleme_aleatoire(taille_n):
     return tmp.name
 
 
-def mesurer_complexite(tailles, nb_repetitions=10, silencieux=True):
+def mesurer_complexite(tailles, nb_repetitions=100, silencieux=True):
     """
     Mesure les temps d'exécution pour différentes tailles de problèmes.
 
