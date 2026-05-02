@@ -1,6 +1,6 @@
 """
 Fusionne les fichiers resultats_machine_*.json produits par complexity.py
-et génère les graphiques combinés.
+pour chaque VM puis génère les graphiques combinés.
 
 Usage :
     python merge_results.py                          # lit tous les resultats_machine_*.json

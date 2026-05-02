@@ -1,6 +1,8 @@
-# =============================================================================
-# ÉTAPE 10 : CRÉATION DES FICHIERS .TXT DES 12 PROBLÈMES
-# =============================================================================
+"""
+Ce module permet de générer en texte les 12 problèmes donnés.
+Il donne aussi les outils pour générer des problèmes aléatoires.
+"""
+
 import os
 
 PROBLEMES = {

@@ -1,3 +1,7 @@
+"""
+Résolution et représentation des problèmes chargés en mémoire.
+"""
+
 from graphe import Graphe
 from readAndDisplayFunc import *
 from collections import deque

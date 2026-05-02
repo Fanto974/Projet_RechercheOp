@@ -1,3 +1,4 @@
+"""Module indépendant de de génération des traces et exécution pour les fichiers de tests."""
 import os
 
 
@@ -56,4 +57,5 @@ def generer_toutes_les_traces(groupe="1", equipe="5"):
             print(f"Exécution problème {num} - {methode.upper()}...")
             executer_et_sauvegarder_trace(num, methode, groupe=groupe, equipe=equipe)
 
-generer_toutes_les_traces(groupe="1", equipe="5")
+if __name__ == "__main__":
+    generer_toutes_les_traces(groupe="1", equipe="5")

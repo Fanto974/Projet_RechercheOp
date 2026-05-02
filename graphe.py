@@ -1,3 +1,5 @@
+"""Module de génération et management des graphes."""
+
 from collections import deque
 
 class Graphe:
@@ -48,6 +50,7 @@ class Graphe:
             x1, y1 = pos_C[j], ligne_C - 1
 
             # Algorithme de Bresenham
+            # https://fr.wikipedia.org/wiki/Algorithme_de_trac%C3%A9_de_segment_de_Bresenham
             dx = abs(x1 - x0)
             dy = abs(y1 - y0)
             sx = 1 if x1 > x0 else -1
@@ -85,7 +88,6 @@ class Graphe:
     def construire_adjacence(self):
         """
         Construit la liste d'adjacence du graphe biparti sous forme de DICTIONNAIRE.
-
         """
         adj = {}
         for (i, j) in self.aretes:
@@ -106,14 +108,13 @@ class Graphe:
 
     def detecter_cycle(self):
         """
-        Détecte un cycle dans le graphe biparti par BFS.
+        Détecte un cycle dans le graphe biparti par un parcours en largeur (BFS).
         Utilise un dictionnaire pour la liste d'adjacence.
 
         Retourne :
-            (has_cycle, cycle_aretes)
-            has_cycle (bool) : True si un cycle est détecté
-            cycle_aretes (list) : liste des arêtes (i,j) formant le cycle
-                                  (indices fournisseur/client numériques)
+        - (has_cycle, cycle_aretes)
+        - has_cycle (bool) : True si un cycle est détecté
+        - cycle_aretes (list) : liste des arêtes (i,j) formant le cycle (indices fournisseur/client)
         """
         if not self.aretes:
             return False, []
@@ -212,10 +213,9 @@ class Graphe:
         Utilise un dictionnaire pour la liste d'adjacence.
 
         Retourne :
-            (est_connexe, composantes)
-            est_connexe (bool)
-            composantes (list of list) : chaque composante est une liste de sommets
-                                         (clés de type "P0", "C1", etc.)
+        - (est_connexe, composantes)
+        - est_connexe (bool)
+        - composantes (list of list) : chaque composante est une liste de sommets (clés de type "P0", "C1", etc.)
         """
         if not self.aretes:
             return False, []

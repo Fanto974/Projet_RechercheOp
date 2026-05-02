@@ -1,3 +1,8 @@
+"""
+Ce module contient le code nécessaire à l'étude de complexité.
+L'étude de la complexité s'est fait sur plusieurs machines virtuelles qui tourne sur une seule machine physique.
+"""
+
 import argparse
 import json
 import os
@@ -10,7 +15,7 @@ import tempfile
 from readAndDisplayFunc import afficher_resultats
 from createFiles import creer_fichier_probleme
 
-# Répartition du travail sur 4 machines.
+# Répartition du travail sur 4 machines virtuelles.
 # Les grandes tailles dominants, on les isole chacune sur une machine.
 # Les reps sont réduites pour les grandes tailles (compromis temps/statistiques).
 DISTRIBUTION_MACHINES = {

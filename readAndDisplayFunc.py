@@ -1,15 +1,18 @@
-# Le fichier .txt est organisé ainsi :
-#   Ligne 1 : n m  (nombre de fournisseurs, nombre de clients)
-#   Lignes 2 à n+1 : a_i1 a_i2 ... a_im P_i  (coûts + provision)
-#   Dernière ligne : C_1 C_2 ... C_m  (commandes)
-#
-# Pseudo-code :
-#   Ouvrir le fichier
-#   Lire n et m
-#   Pour i de 1 à n :
-#       Lire les m coûts et la provision P_i
-#   Lire les m commandes C_j
-#   Retourner n, m, matrice_couts, provisions, commandes
+"""Module d'interraction I/O pour l'affiche et la lecture (puis mise en mémoire des fichiers)."""
+"""
+Le fichier .txt est organisé ainsi :
+  Ligne 1 : n m  (nombre de fournisseurs, nombre de clients)
+  Lignes 2 à n+1 : a_i1 a_i2 ... a_im P_i  (coûts + provision)
+  Dernière ligne : C_1 C_2 ... C_m  (commandes)
+
+Pseudo-code :
+  Ouvrir le fichier
+  Lire n et m
+  Pour i de 1 à n :
+      Lire les m coûts et la provision P_i
+  Lire les m commandes C_j
+  Retourner n, m, matrice_couts, provisions, commandes
+"""
 
 
 def lire_fichier(path):
@@ -342,9 +345,8 @@ def afficher_resultats(resultats):
     fig3.savefig("ratio_comparaison.png", dpi=150)
     print("\n=> ratio_comparaison.png sauvegardé")
 
-    # =========================================================================
-    # 6) Discussion
-    # =========================================================================
+
+    # Elements de compréhension.
     print("\n" + "=" * 70)
     print("DISCUSSION")
     print("=" * 70)
